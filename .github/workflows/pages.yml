@@ -29,6 +29,7 @@ jobs:
           cp -r index.html src _site/
           [ -d vendor ] && cp -r vendor _site/ || true
           [ -d examples ] && cp -r examples _site/ || true
+          [ -d docs ] && cp -r docs _site/ || true
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

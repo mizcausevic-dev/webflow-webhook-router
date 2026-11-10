@@ -7,7 +7,13 @@
 
 **Live demo: https://mizcausevic-dev.github.io/webflow-webhook-router/**. It sends valid, tampered, replayed and unsigned deliveries through the real router code in your browser.
 
+[![Webflow Webhook Router](docs/social-card.png)](https://mizcausevic-dev.github.io/webflow-webhook-router/)
+
 A production-shaped receiver for **Webflow webhooks**. It verifies the `x-webflow-signature` HMAC, rejects stale or replayed requests, ignores Webflow's retries once an event has been handled, and routes each event by `triggerType` to handlers. The same code runs on **Cloudflare Workers** and **Node 20+**, using Web Crypto with no dependencies.
+
+## See it in action
+
+![Recording of the live demo](docs/demo.gif)
 
 ## Why it matters
 

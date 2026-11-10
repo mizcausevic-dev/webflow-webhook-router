@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Webflow Webhook Router: verified, idempotent webhook handling</title>
+  <meta name="description" content="See Webflow webhook signature verification, replay protection and idempotency work in your browser, using the same code that runs on Cloudflare Workers and Node.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230b0c10%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%235b8cff%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+<header class="site"><div class="wrap">
+  <a class="brand" href="./"><span class="dot" aria-hidden="true"></span>Webflow Webhook Router</a>
+  <nav><a href="#deploy">Deploy</a><a href="https://github.com/mizcausevic-dev/webflow-webhook-router">GitHub</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Webflow webhooks · Edge functions</div>
+    <h1>Only act on webhooks that really came from Webflow.</h1>
+    <p>Form submissions, CMS changes and orders arrive as signed <code>POST</code> requests. This router checks the HMAC signature, rejects replays older than 5 minutes, ignores Webflow's retries once an event has been handled, and routes each event by <code>triggerType</code>. The buttons below run the real router code in your browser.</p>
+  </section>
+
+  <div class="grid cols-2">
+    <section class="card">
+      <h2>Delivery</h2>
+      <div class="field"><label for="secret">Signing secret</label><input id="secret" value="whsec_demo_only_not_a_real_secret" autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="body">Request body (form_submission)</label><textarea id="body" rows="10" spellcheck="false"></textarea></div>
+      <div class="field"><label>x-webflow-timestamp</label><div class="mono" id="ts"></div></div>
+      <div class="field"><label>x-webflow-signature = hex(HMAC-SHA256(secret, timestamp + ":" + body))</label><div class="mono" id="sig"></div></div>
+    </section>
+
+    <div class="stack">
+      <section class="card">
+        <h2>Send it through the router</h2>
+        <div class="scenario-grid">
+          <button type="button" data-s="valid">Valid delivery</button>
+          <button type="button" class="ghost" data-s="retry">Webflow retry (same event)</button>
+          <button type="button" class="ghost" data-s="tampered">Tampered body</button>
+          <button type="button" class="ghost" data-s="stale">Replayed after 6 min</button>
+          <button type="button" class="ghost" data-s="wrongkey">Wrong secret</button>
+          <button type="button" class="ghost" data-s="unsigned">Dashboard webhook (unsigned)</button>
+          <button type="button" class="ghost" data-s="spam">Honeypot filled</button>
+          <button type="button" class="ghost" data-s="other">site_publish (no handler)</button>
+        </div>
+      </section>
+      <section class="card" aria-live="polite">
+        <h2>Response</h2>
+        <div class="status" id="status">—</div>
+        <pre class="code mt-8" id="response">Pick a scenario.</pre>
+        <h3 class="mt-16">Server log</h3>
+        <pre class="code" id="log"></pre>
+      </section>
+      <section class="card">
+        <h2>Slack message it would post</h2>
+        <pre class="code" id="slack"></pre>
+        <p class="hint">Form input is escaped for Slack mrkdwn, so a visitor typing <code>&lt;@channel&gt;</code> can't ping your whole workspace.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card mt-16" id="deploy">
+    <h2>Deploy</h2>
+    <pre class="code">npx wrangler secret put WEBFLOW_WEBHOOK_SECRET   # the webhook's secret, or your OAuth app's client secret
+npx wrangler secret put SLACK_WEBHOOK_URL        # optional
+npx wrangler deploy                              # → https://…workers.dev/webhooks/webflow
+
+# or on any Node 20+ host
+WEBFLOW_WEBHOOK_SECRET=… node src/node-server.js</pre>
+    <p class="hint">Register the endpoint with <code>POST /v2/sites/{site_id}/webhooks</code>. Webhooks created in the Webflow dashboard aren't signed, so they can't be verified.</p>
+  </section>
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>Built by <a href="https://github.com/mizcausevic-dev">Miz Causevic</a> · Kinetic Gain LLC</span>
+  <span>Independent project, not affiliated with or endorsed by Webflow, Inc. · MIT licensed</span>
+</div></footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

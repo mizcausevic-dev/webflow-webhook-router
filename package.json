@@ -1,0 +1,10 @@
+{
+  "name": "webflow-webhook-router",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Verified Webflow webhook receiver for Cloudflare Workers and Node.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": { "test": "node --test", "start": "node src/node-server.js" },
+  "engines": { "node": ">=20" }
+}

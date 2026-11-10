@@ -1,0 +1,9 @@
+name = "webflow-webhook-router"
+main = "src/worker.js"
+compatibility_date = "2026-11-01"
+
+# wrangler secret put WEBFLOW_WEBHOOK_SECRET
+# wrangler secret put SLACK_WEBHOOK_URL
+# [[kv_namespaces]]
+# binding = "WEBHOOK_DEDUPE"
+# id = "<your KV namespace id>"

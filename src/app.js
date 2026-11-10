@@ -34,6 +34,7 @@ async function refreshSignature() {
 }
 
 async function run(kind) {
+  if (kind === 'retry' && !lastDelivery) await run('valid'); // a retry needs an original delivery to repeat
   const secret = $('secret').value;
   let body = $('body').value;
   let ts = Date.now();

@@ -14,6 +14,7 @@ const enc = new TextEncoder();
 const keyCache = new Map();
 async function hmacKey(secret) {
   if (!keyCache.has(secret)) {
+    if (keyCache.size >= 16) keyCache.delete(keyCache.keys().next().value); // bounded: secrets rotate, the cache must not grow forever
     keyCache.set(secret, crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']));
   }
   return keyCache.get(secret);
